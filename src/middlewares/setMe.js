@@ -1,6 +1,4 @@
 // @ts-nocheck
-const cookie = require('cookie');
-
 module.exports = () => {
   return async (
     /**@type {import("koa").Context} */ ctx,
