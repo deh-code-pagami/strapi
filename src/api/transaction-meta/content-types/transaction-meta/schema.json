@@ -1,0 +1,36 @@
+{
+  "kind": "collectionType",
+  "collectionName": "transaction_metas",
+  "info": {
+    "singularName": "transaction-meta",
+    "pluralName": "transaction-metas",
+    "displayName": "Transaction Meta"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "transaction": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::transaction.transaction",
+      "inversedBy": "transaction_metas"
+    },
+    "user_debtor": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "user_creditor": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "amount": {
+      "type": "decimal",
+      "min": 0.01,
+      "required": true
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "group_users",
+  "info": {
+    "singularName": "group-user",
+    "pluralName": "group-users",
+    "displayName": "group_user"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "group": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::group.group",
+      "inversedBy": "users"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "groups"
+    }
+  }
+}
