@@ -4,19 +4,14 @@
   "info": {
     "singularName": "transaction-meta",
     "pluralName": "transaction-metas",
-    "displayName": "Transaction Meta"
+    "displayName": "Transaction Meta",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
   },
   "pluginOptions": {},
   "attributes": {
-    "transaction": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::transaction.transaction",
-      "inversedBy": "transaction_metas"
-    },
     "user_debtor": {
       "type": "relation",
       "relation": "oneToOne",

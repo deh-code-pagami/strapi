@@ -5,6 +5,7 @@
   "description": "A Strapi application",
   "scripts": {
     "develop": "strapi develop",
+    "_develop": "export DEBUG=strapi:* && node --inspect=0.0.0.0:9229 --nolazy node_modules/.bin/strapi start",
     "start": "strapi start",
     "build": "strapi build",
     "strapi": "strapi"
