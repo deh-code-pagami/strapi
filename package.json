@@ -14,15 +14,16 @@
     "@types/koa": "^2.13.12"
   },
   "dependencies": {
-    "@strapi/plugin-cloud": "4.16.2",
-    "@strapi/plugin-i18n": "4.16.2",
-    "@strapi/plugin-users-permissions": "4.16.2",
-    "@strapi/strapi": "4.16.2",
+    "@strapi/plugin-cloud": "4.21.1",
+    "@strapi/plugin-i18n": "4.21.1",
+    "@strapi/plugin-users-permissions": "4.21.1",
+    "@strapi/strapi": "4.21.1",
     "cookie": "^0.6.0",
     "mysql": "2.18.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "5.3.4",
+    "strapi-plugin-transformer": "^3.1.2",
     "styled-components": "5.3.3"
   },
   "author": {
