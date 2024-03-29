@@ -12,12 +12,12 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "user_debtor": {
+    "userDebtor": {
       "type": "relation",
       "relation": "oneToOne",
       "target": "plugin::users-permissions.user"
     },
-    "user_creditor": {
+    "userCreditor": {
       "type": "relation",
       "relation": "oneToOne",
       "target": "plugin::users-permissions.user"

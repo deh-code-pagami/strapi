@@ -19,10 +19,10 @@ function setPopulatedFields(ctx) {
   ctx.query = {
     populate: {
       group: true,
-      transaction_metas: {
+      transactionMetas: {
         populate: {
-          user_debtor: true,
-          user_creditor: true
+          userDebtor: true,
+          userCreditor: true
         }
       }
     }
@@ -35,13 +35,13 @@ module.exports = createCoreController('api::transaction.transaction', {
     setPopulatedFields(ctx);
 
     ctx.query.filters = {
-      transaction_metas: {
+      transactionMetas: {
         $or: [
           {
-            user_debtor: ctx.state.user?.id
+            userDebtor: ctx.state.user?.id
           },
           {
-            user_creditor: ctx.state.user?.id
+            userCreditor: ctx.state.user?.id
           }
         ]
       }
@@ -54,7 +54,7 @@ module.exports = createCoreController('api::transaction.transaction', {
     setPopulatedFields(ctx);
 
     const result = await super.findOne(ctx);
-    const userIds = result?.data?.attributes?.transaction_metas?.data?.map(meta => ([meta?.attributes?.user_debtor?.data?.id, meta?.attributes?.user_creditor?.data?.id]));
+    const userIds = result?.data?.attributes?.transactionMetas?.data?.map(meta => ([meta?.attributes?.userDebtor?.data?.id, meta?.attributes?.userCreditor?.data?.id]));
 
     if (!userIds?.flat().includes(ctx.state?.user?.id)) {
       return ctx.notFound();
