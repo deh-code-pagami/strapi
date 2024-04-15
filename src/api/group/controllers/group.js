@@ -118,6 +118,9 @@ module.exports = createCoreController('api::group.group', {
     subscriptions = await strapi.entityService.findMany('api::group-user.group-user', {
       filters: {
         group: groupId
+      },
+      populate: {
+        user: true
       }
     });
 
@@ -126,7 +129,7 @@ module.exports = createCoreController('api::group.group', {
     }
 
     return {
-      data: subscriptions
+      data: subscriptions.map(sub => sub.user)
     }
   }
 });
