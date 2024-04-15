@@ -100,5 +100,33 @@ module.exports = createCoreController('api::group.group', {
     strapi.log.info(`group ${subscription.group.id} created by user ${subscription.user.id}`);
 
     return prepareResult(result);
+  },
+
+  async deleteUser(ctx) {
+    const { groupId, userId } = ctx.params;
+
+    let subscriptions = await strapi.entityService.findMany('api::group-user.group-user', {
+      filters: {
+        user: userId,
+        group: groupId
+      }
+    });
+
+    const deleteSubscriptions = subscriptions.map(sub => strapi.entityService.delete('api::group-user.group-user', sub.id))
+    await Promise.all(deleteSubscriptions);
+
+    subscriptions = await strapi.entityService.findMany('api::group-user.group-user', {
+      filters: {
+        group: groupId
+      }
+    });
+
+    if (!subscriptions.length) {
+      await strapi.entityService.delete('api::group.group', groupId);
+    }
+
+    return {
+      data: subscriptions
+    }
   }
 });
