@@ -62,4 +62,18 @@ module.exports = createCoreController('api::transaction.transaction', {
 
     return result;
   },
+
+  async create(ctx) {
+    setPopulatedFields(ctx);
+    const data = ctx.request.body.data;
+
+    if (data.transactionMetas?.length) {
+      data.transactionMetas = await Promise.all(
+        data.transactionMetas.map(transactionMeta =>
+          strapi.entityService.create('api::transaction-meta.transaction-meta', { data: transactionMeta }))
+        )
+    }
+
+    return await super.create(ctx);
+  }
 });

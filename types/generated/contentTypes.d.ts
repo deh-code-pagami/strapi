@@ -497,9 +497,9 @@ export interface ApiTransactionMetaTransactionMeta
     draftAndPublish: true;
   };
   attributes: {
-    userDebtor: Attribute.Relation<
+    userDebtors: Attribute.Relation<
       'api::transaction-meta.transaction-meta',
-      'oneToOne',
+      'oneToMany',
       'plugin::users-permissions.user'
     >;
     userCreditor: Attribute.Relation<

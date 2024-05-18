@@ -12,9 +12,9 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "userDebtor": {
+    "userDebtors": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "oneToMany",
       "target": "plugin::users-permissions.user"
     },
     "userCreditor": {
