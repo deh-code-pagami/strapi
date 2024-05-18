@@ -24,7 +24,12 @@ function setPopulatedFields(ctx) {
       },
       transactions: {
         populate: {
-          transaction_meta: true
+          transactionMetas: {
+            populate: {
+              userCreditor: true,
+              userDebtors: true
+            }
+          }
         }
       }
     }
