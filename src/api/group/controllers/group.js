@@ -1,40 +1,12 @@
 'use strict';
 
+const { getPopulatedFields } = require('../../../lib/context-utils');
+
 /**
  * group controller
  */
 
 const { createCoreController } = require('@strapi/strapi').factories;
-/**
- * @param {import('koa').Context} ctx
- */
-function setPopulatedFields(ctx) {
-  const user = ctx.state?.user;
-
-  if (!user) {
-    return;
-  }
-
-  ctx.query = {
-    populate: {
-      users: {
-        populate: {
-          user: true
-        }
-      },
-      transactions: {
-        populate: {
-          transactionMetas: {
-            populate: {
-              userCreditor: true,
-              userDebtors: true
-            }
-          }
-        }
-      }
-    }
-  };
-}
 
 function prepareData(data) {
   if (!data) {
@@ -50,20 +22,10 @@ function prepareData(data) {
   return data;
 }
 
-function prepareResult(result) {
-  if (!result) {
-    return result;
-  }
-
-  result.data = prepareData(result.data);
-
-  return result;
-}
-
 module.exports = createCoreController('api::group.group', {
 
   async find(ctx) {
-    setPopulatedFields(ctx);
+    ctx.query = getPopulatedFields('api::group.group');
 
     ctx.query.filters = {
       users: {
@@ -71,11 +33,15 @@ module.exports = createCoreController('api::group.group', {
       }
     }
 
-    return prepareResult(await super.find(ctx));
+    const result = await super.find(ctx);
+    prepareData(result?.data);
+
+    return result;
   },
 
+  /**@param {import('koa').Context} ctx  */
   async findOne(ctx) {
-    setPopulatedFields(ctx);
+    ctx.query = getPopulatedFields('api::group.group');
 
     const result = await super.findOne(ctx);
 
@@ -85,11 +51,13 @@ module.exports = createCoreController('api::group.group', {
       return ctx.notFound();
     }
 
-    return prepareResult(result);
+    prepareData(result?.data);
+
+    return result;
   },
 
   async create(ctx) {
-    setPopulatedFields(ctx);
+    ctx.query = getPopulatedFields('api::group.group');
 
     const result = await super.create(ctx);
 
@@ -104,7 +72,9 @@ module.exports = createCoreController('api::group.group', {
 
     strapi.log.info(`group ${subscription.group.id} created by user ${subscription.user.id}`);
 
-    return prepareResult(result);
+    prepareData(result?.data);
+
+    return result;
   },
 
   async deleteUser(ctx) {
