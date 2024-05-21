@@ -1,6 +1,6 @@
 'use strict';
 
-const { getPopulatedFields } = require('../../../lib/context-utils');
+const { getDefaultQuery } = require('../../../lib/context-utils');
 
 /**
  * group controller
@@ -25,13 +25,7 @@ function prepareData(data) {
 module.exports = createCoreController('api::group.group', {
   /**@param {import('koa').Context} ctx  */
   async find(ctx) {
-    ctx.query = getPopulatedFields('api::group.group');
-
-    ctx.query.filters = {
-      users: {
-        user: ctx.state.user?.id
-      }
-    }
+    ctx.query = getDefaultQuery('api::group.group', ctx);
 
     const result = await super.find(ctx);
 
@@ -42,7 +36,7 @@ module.exports = createCoreController('api::group.group', {
 
   /**@param {import('koa').Context} ctx  */
   async findOne(ctx) {
-    ctx.query = getPopulatedFields('api::group.group');
+    ctx.query = getDefaultQuery('api::group.group', ctx);
 
     const result = await super.findOne(ctx);
 
@@ -58,7 +52,7 @@ module.exports = createCoreController('api::group.group', {
   },
 
   async create(ctx) {
-    ctx.query = getPopulatedFields('api::group.group');
+    ctx.query = getDefaultQuery('api::group.group', ctx);
 
     const result = await super.create(ctx);
 

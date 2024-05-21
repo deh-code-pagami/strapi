@@ -1,6 +1,6 @@
 'use strict';
 
-const { getPopulatedFields } = require('../../../lib/context-utils');
+const { getDefaultQuery } = require('../../../lib/context-utils');
 
 /**
  * transaction controller
@@ -11,7 +11,7 @@ const { createCoreController } = require('@strapi/strapi').factories;
 module.exports = createCoreController('api::transaction.transaction', {
 
   async find(ctx) {
-    ctx.query = getPopulatedFields('api::transaction.transaction');
+    ctx.query = getDefaultQuery('api::transaction.transaction', ctx);
 
     ctx.query.filters = {
       transactionMetas: {
@@ -30,7 +30,7 @@ module.exports = createCoreController('api::transaction.transaction', {
   },
 
   async findOne(ctx) {
-    ctx.query = getPopulatedFields('api::transaction.transaction');
+    ctx.query = getDefaultQuery('api::transaction.transaction', ctx);
 
     const result = await super.findOne(ctx);
     const userIds = result?.data?.attributes?.transactionMetas?.data?.map(meta => ([meta?.attributes?.userDebtors?.data?.id, meta?.attributes?.userCreditor?.data?.id]));
@@ -43,7 +43,7 @@ module.exports = createCoreController('api::transaction.transaction', {
   },
 
   async create(ctx) {
-    ctx.query = getPopulatedFields('api::transaction.transaction');
+    ctx.query = getDefaultQuery('api::transaction.transaction', ctx);
     const data = ctx.request.body.data;
 
     if (data.transactionMetas?.length) {

@@ -1,43 +1,57 @@
 /**@typedef {import('@strapi/strapi').Common.UID.ContentType} ContentType */
 
-/**@type {Object.<ContentType, Object>} */
-const populatedFields = {
-  'api::group.group': {
-    populate: {
-      users: {
+
+/**@param {ContentType} uid  */
+function getDefaultQuery(uid, ctx = {}) {
+  /**@type {Object.<ContentType, Object>} */
+  switch (uid) {
+    case 'api::group.group':
+      return {
+        populate: {
+          users: getDefaultQuery('api::group-user.group-user', ctx),
+          transactions: getDefaultQuery('api::transaction.transaction', ctx),
+        },
+        filters: {
+          users: {
+            user: ctx.state.user?.id
+          }
+        }
+      };
+    case 'api::transaction.transaction':
+      return {
+        group: true,
+        filters: {
+          transactionMetas: {
+            $or: [
+              {
+                userDebtors: ctx.state.user?.id
+              },
+              {
+                userCreditor: ctx.state.user?.id
+              }
+            ]
+          }
+        },
+        populate: {
+          transactionMetas: getDefaultQuery('api::transaction-meta.transaction-meta', ctx)
+        }
+      }
+    case 'api::group-user.group-user':
+      return {
         populate: {
           user: true
         }
-      },
-      transactions: {
+      }
+    case 'api::transaction-meta.transaction-meta':
+      return {
         populate: {
-          transactionMetas: {
-            populate: {
-              userCreditor: true,
-              userDebtors: true
-            }
-          }
+          userCreditor: true,
+          userDebtors: true
         }
       }
-    }
-  },
-  'api::group-user.group-user': {
-    populate: {
-      user: true
-    }
-  },
-  'api::transaction.transaction': {
-    populate: {
-      group: true,
-      transactionMetas: {
-        populate: {
-          userDebtors: true,
-          userCreditor: true
-        }
-      }
-    }
-  },
-  'api::transaction-meta.transaction-meta': {},
+  }
+
+  return {};
 }
 
 module.exports = {
@@ -45,7 +59,5 @@ module.exports = {
    * @param {ContentType} uid
    * @returns {Object}
    */
-  getPopulatedFields(uid) {
-    return populatedFields[uid] || {};
-  }
+  getDefaultQuery
 }
