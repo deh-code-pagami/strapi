@@ -49,7 +49,12 @@ module.exports = createCoreController('api::transaction.transaction', {
     if (data.transactionMetas?.length) {
       data.transactionMetas = await Promise.all(
         data.transactionMetas.map(transactionMeta =>
-          strapi.entityService.create('api::transaction-meta.transaction-meta', { data: transactionMeta }))
+          strapi.entityService.create('api::transaction-meta.transaction-meta', {
+            data: {
+              ...transactionMeta,
+              publishedAt: Date.now()
+            }
+          }))
         )
     }
 

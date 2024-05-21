@@ -40,7 +40,6 @@ const populatedFields = {
   'api::transaction-meta.transaction-meta': {},
 }
 
-// TODO: use getPopulatedFields inside controllers
 module.exports = {
   /**
    * @param {ContentType} uid

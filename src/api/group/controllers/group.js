@@ -23,7 +23,7 @@ function prepareData(data) {
 }
 
 module.exports = createCoreController('api::group.group', {
-
+  /**@param {import('koa').Context} ctx  */
   async find(ctx) {
     ctx.query = getPopulatedFields('api::group.group');
 
@@ -34,6 +34,7 @@ module.exports = createCoreController('api::group.group', {
     }
 
     const result = await super.find(ctx);
+
     prepareData(result?.data);
 
     return result;
