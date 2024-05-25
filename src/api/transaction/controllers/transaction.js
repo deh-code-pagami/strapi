@@ -33,11 +33,31 @@ module.exports = createCoreController('api::transaction.transaction', {
     ctx.query = getDefaultQuery('api::transaction.transaction', ctx);
 
     const result = await super.findOne(ctx);
-    const userIds = result?.data?.attributes?.transactionMetas?.data?.map(meta => ([meta?.attributes?.userDebtors?.data?.id, meta?.attributes?.userCreditor?.data?.id]));
 
-    if (!userIds?.flat().includes(ctx.state?.user?.id)) {
+    let currentUserCan = false;
+    const metas = result?.data?.attributes?.transactionMetas?.data;
+    const userId = ctx.state?.user?.id;
+
+    if (!Array.isArray(metas) || !userId) {
       return ctx.notFound();
     }
+
+    for (const meta of metas) {
+      if (meta.attributes?.userCreditor.data.id === userId) {
+        currentUserCan = true;
+        break;
+      }
+
+      if (meta.attributes?.userDebtors.data.find(u => u.id === userId)) {
+        currentUserCan = true;
+        break;
+      }
+    }
+
+    if (!currentUserCan) {
+      return ctx.notFound();
+    }
+
 
     return result;
   },
