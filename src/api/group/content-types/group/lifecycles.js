@@ -2,8 +2,6 @@ module.exports = {
   async beforeDelete(event) {
     const { params } = event;
 
-    strapi.log.info(require('util').inspect(params, false, 5))
-
     const groupId = params?.where?.id;
 
     if (!groupId) {
