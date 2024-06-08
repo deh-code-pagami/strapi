@@ -13,5 +13,20 @@ module.exports = () => {
       }
 
       await next();
+
+      if (jwt && !ctx.state.user) {
+        const res = ctx.response;
+        let setCookie = res.header["set-cookie"];
+        const jwtCookie = `auth_jwt=; Path=/api; HttpOnly`;
+
+        if (Array.isArray(setCookie)) {
+          setCookie.push(jwtCookie);
+        }
+        else {
+          setCookie = [jwtCookie];
+        }
+
+        res.set("Set-Cookie", setCookie);
+      }
   }
 }
