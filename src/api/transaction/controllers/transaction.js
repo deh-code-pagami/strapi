@@ -17,7 +17,7 @@ module.exports = createCoreController('api::transaction.transaction', {
       transactionMetas: {
         $or: [
           {
-            userDebtors: ctx.state.user?.id
+            userDebtor: ctx.state.user?.id
           },
           {
             userCreditor: ctx.state.user?.id
@@ -48,7 +48,7 @@ module.exports = createCoreController('api::transaction.transaction', {
         break;
       }
 
-      if (meta.attributes?.userDebtors.data.find(u => u.id === userId)) {
+      if (meta.attributes?.userDebtor.data.id === userId) {
         currentUserCan = true;
         break;
       }

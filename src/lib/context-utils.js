@@ -24,7 +24,7 @@ function getDefaultQuery(uid, ctx = {}) {
           transactionMetas: {
             $or: [
               {
-                userDebtors: ctx.state.user?.id
+                userDebtor: ctx.state.user?.id
               },
               {
                 userCreditor: ctx.state.user?.id
@@ -46,7 +46,7 @@ function getDefaultQuery(uid, ctx = {}) {
       return {
         populate: {
           userCreditor: true,
-          userDebtors: true
+          userDebtor: true
         }
       }
   }
