@@ -1,6 +1,6 @@
 'use strict';
 
-const { getDefaultQuery } = require('../../../lib/context-utils');
+const { getDefaultQuery, normalizeData } = require('../../../lib/context-utils');
 
 /**
  * group controller
@@ -17,7 +17,7 @@ function prepareData(data) {
     return data.map(el => prepareData(el));
   }
 
-  data.attributes.users.data = data.attributes.users.data.map(sub => sub.attributes.user);
+  data.users = data.users?.map(sub => sub.user);
 
   return data;
 }
@@ -29,7 +29,9 @@ module.exports = createCoreController('api::group.group', {
 
     const result = await super.find(ctx);
 
-    prepareData(result?.data);
+    result.data = normalizeData(result.data);
+
+    prepareData(result.data);
 
     return result;
   },
@@ -40,13 +42,15 @@ module.exports = createCoreController('api::group.group', {
 
     const result = await super.findOne(ctx);
 
-    const members = result?.data?.attributes?.users?.data?.map(subscription => subscription.attributes.user.data.id);
+    result.data = normalizeData(result.data);
+
+    const members = result.data?.users?.map(subscription => subscription.user.id);
 
     if (!members?.includes(ctx.state?.user?.id)) {
       return ctx.notFound();
     }
 
-    prepareData(result?.data);
+    prepareData(result.data);
 
     return result;
   },
@@ -56,6 +60,8 @@ module.exports = createCoreController('api::group.group', {
 
     const result = await super.create(ctx);
 
+    result.data = normalizeData(result.data);
+
     const subscription = await strapi.entityService.create('api::group-user.group-user', {
       data: {
         user: ctx.state.user?.id,
@@ -64,6 +70,8 @@ module.exports = createCoreController('api::group.group', {
       },
       populate: ['group', 'user']
     });
+
+    result.data.users?.push(subscription);
 
     strapi.log.info(`group ${subscription.group.id} created by user ${subscription.user.id}`);
 
