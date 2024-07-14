@@ -1,7 +1,5 @@
 'use strict';
 
-const { getDefaultQuery } = require('../../../lib/context-utils');
-
 /**
  * transaction controller
  */
@@ -11,8 +9,6 @@ const { createCoreController } = require('@strapi/strapi').factories;
 module.exports = createCoreController('api::transaction.transaction', {
 
   async find(ctx) {
-    ctx.query = getDefaultQuery('api::transaction.transaction', ctx);
-
     ctx.query.filters = {
       transactionMetas: {
         $or: [
@@ -30,7 +26,18 @@ module.exports = createCoreController('api::transaction.transaction', {
   },
 
   async findOne(ctx) {
-    ctx.query = getDefaultQuery('api::transaction.transaction', ctx);
+    ctx.query.filters = {
+      transactionMetas: {
+        $or: [
+          {
+            userDebtor: ctx.state.user?.id
+          },
+          {
+            userCreditor: ctx.state.user?.id
+          }
+        ]
+      }
+    }
 
     const result = await super.findOne(ctx);
 
@@ -63,7 +70,19 @@ module.exports = createCoreController('api::transaction.transaction', {
   },
 
   async create(ctx) {
-    ctx.query = getDefaultQuery('api::transaction.transaction', ctx);
+    ctx.query.filters = {
+      transactionMetas: {
+        $or: [
+          {
+            userDebtor: ctx.state.user?.id
+          },
+          {
+            userCreditor: ctx.state.user?.id
+          }
+        ]
+      }
+    };
+
     const data = ctx.request.body.data;
 
     if (data.transactionMetas?.length) {

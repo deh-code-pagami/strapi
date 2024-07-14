@@ -1,6 +1,11 @@
 // @ts-nocheck
+
+/**
+ * Set jwt for the authenticated user in the response's cookie. This prevent the jwt from being accessed by frontend javascript
+ * @returns {(cxt: import("koa").Context, next: function) => any }
+ */
 module.exports = () => {
-  return async (/**@type {import("koa").Context} */ ctx, next) => {
+  return async (ctx, next) => {
 
     await next();
 

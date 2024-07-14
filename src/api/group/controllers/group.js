@@ -1,6 +1,6 @@
 'use strict';
 
-const { getDefaultQuery, normalizeData } = require('../../../lib/context-utils');
+const { normalizeData } = require('../../../lib/context-utils');
 
 /**
  * group controller
@@ -23,9 +23,15 @@ function prepareData(data) {
 }
 
 module.exports = createCoreController('api::group.group', {
-  /**@param {import('koa').Context} ctx  */
   async find(ctx) {
-    ctx.query = getDefaultQuery('api::group.group', ctx);
+    const filters = ctx.query.filters || {};
+
+    ctx.query.filters = {
+      ...filters,
+      users: {
+        user: ctx.state.user?.id
+      }
+    }
 
     const result = await super.find(ctx);
 
@@ -36,10 +42,7 @@ module.exports = createCoreController('api::group.group', {
     return result;
   },
 
-  /**@param {import('koa').Context} ctx  */
   async findOne(ctx) {
-    ctx.query = getDefaultQuery('api::group.group', ctx);
-
     const result = await super.findOne(ctx);
 
     result.data = normalizeData(result.data);
@@ -56,8 +59,6 @@ module.exports = createCoreController('api::group.group', {
   },
 
   async create(ctx) {
-    ctx.query = getDefaultQuery('api::group.group', ctx);
-
     const result = await super.create(ctx);
 
     result.data = normalizeData(result.data);

@@ -4,60 +4,8 @@ function isObject (obj)  {
   return Object.prototype.toString.call(obj) === '[object Object]';
 }
 
-/**@param {ContentType} uid  */
-function getDefaultQuery(uid, ctx = {}) {
-  /**@type {Object.<ContentType, Object>} */
-  switch (uid) {
-    case 'api::group.group':
-      return {
-        populate: {
-          users: getDefaultQuery('api::group-user.group-user', ctx),
-          transactions: getDefaultQuery('api::transaction.transaction', ctx),
-        },
-        filters: {
-          users: {
-            user: ctx.state.user?.id
-          }
-        }
-      };
-    case 'api::transaction.transaction':
-      return {
-        group: true,
-        filters: {
-          transactionMetas: {
-            $or: [
-              {
-                userDebtor: ctx.state.user?.id
-              },
-              {
-                userCreditor: ctx.state.user?.id
-              }
-            ]
-          }
-        },
-        populate: {
-          transactionMetas: getDefaultQuery('api::transaction-meta.transaction-meta', ctx)
-        }
-      }
-    case 'api::group-user.group-user':
-      return {
-        populate: {
-          user: true
-        }
-      }
-    case 'api::transaction-meta.transaction-meta':
-      return {
-        populate: {
-          userCreditor: true,
-          userDebtor: true
-        }
-      }
-  }
-
-  return {};
-}
-
 /**
+ * Strips data and attributes fields from strapi API response
  * @param {Object | Array} data
  * @param {number} deepness
  *
@@ -97,7 +45,6 @@ function normalizeData (data, deepness = 20) {
 }
 
 module.exports = {
-  getDefaultQuery,
   normalizeData,
   isObject
 }
