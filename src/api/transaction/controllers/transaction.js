@@ -10,6 +10,7 @@ module.exports = createCoreController('api::transaction.transaction', {
 
   async find(ctx) {
     ctx.query.filters = {
+      // @ts-ignore
       transactionMetas: {
         $or: [
           {
@@ -27,6 +28,7 @@ module.exports = createCoreController('api::transaction.transaction', {
 
   async findOne(ctx) {
     ctx.query.filters = {
+      // @ts-ignore
       transactionMetas: {
         $or: [
           {
@@ -70,24 +72,15 @@ module.exports = createCoreController('api::transaction.transaction', {
   },
 
   async create(ctx) {
-    ctx.query.filters = {
-      transactionMetas: {
-        $or: [
-          {
-            userDebtor: ctx.state.user?.id
-          },
-          {
-            userCreditor: ctx.state.user?.id
-          }
-        ]
-      }
-    };
+    // @ts-ignore
+    const { data = {} } = ctx.request.body;
+    const { transactionMetas } = data;
 
-    const data = ctx.request.body.data;
+    data.date = data.date || Date.now();
 
-    if (data.transactionMetas?.length) {
+    if (transactionMetas?.length) {
       data.transactionMetas = await Promise.all(
-        data.transactionMetas.map(transactionMeta =>
+        transactionMetas.map(transactionMeta =>
           strapi.entityService.create('api::transaction-meta.transaction-meta', {
             data: {
               ...transactionMeta,
