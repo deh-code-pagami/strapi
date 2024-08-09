@@ -2,7 +2,7 @@ module.exports = {
   routes: [
     {
       method: 'DELETE',
-      path: '/groups/:groupId/user/:userId',
+      path: '/groups/:groupId/users/:userId',
       handler: 'group.deleteUser',
     },
   ]

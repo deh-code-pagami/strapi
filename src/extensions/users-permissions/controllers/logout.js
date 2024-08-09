@@ -13,6 +13,6 @@ module.exports = {
     }
 
     res.set("Set-Cookie", setCookie);
-    ctx.body = 'OK';
+    ctx.body = 'ok';
   }
 }
