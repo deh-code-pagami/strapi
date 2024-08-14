@@ -1,57 +1,76 @@
-# 🚀 Getting started with Strapi
+# Pagami Strapi
 
-Strapi comes with a full featured [Command Line Interface](https://docs.strapi.io/dev-docs/cli) (CLI) which lets you scaffold and manage your project in seconds.
+## Getting Started
+This project is the frontend of the Pagami application, before continuing make sure to clone the [frontend project](https://github.com/deh-code-pagami/frontend).
 
-### `develop`
+First you have to setup the configurations by running
 
-Start your Strapi application with autoReload enabled. [Learn more](https://docs.strapi.io/dev-docs/cli#strapi-develop)
+`cp .env.example .env`
 
-```
-npm run develop
-# or
-yarn develop
-```
+in this project's directory.
 
-### `start`
-
-Start your Strapi application with autoReload disabled. [Learn more](https://docs.strapi.io/dev-docs/cli#strapi-start)
+To launch this project as a docker container, create a `compose.yml` in this project's parent directory with the following content:
 
 ```
-npm run start
-# or
-yarn start
+# compose.yml
+services:
+  db:
+    image: mariadb
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: "strapi"
+      MYSQL_DATABASE: "strapi"
+      MYSQL_USER: "strapi"
+      MYSQL_PASSWORD: "strapi"
+    volumes:
+      - ./db-data:/var/lib/mysql
+    expose:
+      - 3306
+  strapi:
+    image: node:18
+    working_dir: '/home/node/strapi'
+    ports:
+      - 1337:1337
+    expose:
+      - 1337
+    volumes:
+      - ./strapi:/home/node/strapi
+    command: bash -c "yarn install; yarn run develop"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_HOST=db
+  frontend:
+    image: node:18
+    working_dir: '/home/node/frontend'
+    ports:
+      - 3000:3000
+    volumes:
+      - ./frontend:/home/node/frontend
+    command: bash -c "yarn install; yarn run dev"
+    environment:
+      - BACKEND_HOST=strapi
+      - BACKEND_PORT=1337
+    depends_on:
+      - strapi
 ```
 
-### `build`
-
-Build your admin panel. [Learn more](https://docs.strapi.io/dev-docs/cli#strapi-build)
+At this point the hierarchy should be the following:
 
 ```
-npm run build
-# or
-yarn build
+Pagami/
+├─ compose.yml
+├─ frontend/
+├─ strapi/
 ```
 
-## ⚙️ Deployment
+Now run `docker-compose up -d` in the directory containing the `compose.yml` file.
 
-Strapi gives you many possible deployment options for your project including [Strapi Cloud](https://cloud.strapi.io). Browse the [deployment section of the documentation](https://docs.strapi.io/dev-docs/deployment) to find the best solution for your use case.
+Once all the containers are up and running, you should be able to connect to [strapi admin panel](http://localhost:1337/admin), follow the instructions in order to create an admin account.
 
-## 📚 Learn more
+Now that the admin account is set you can use it to log in the admin console.
 
-- [Resource center](https://strapi.io/resource-center) - Strapi resource center.
-- [Strapi documentation](https://docs.strapi.io) - Official Strapi documentation.
-- [Strapi tutorials](https://strapi.io/tutorials) - List of tutorials made by the core team and the community.
-- [Strapi blog](https://strapi.io/blog) - Official Strapi blog containing articles made by the Strapi team and the community.
-- [Changelog](https://strapi.io/changelog) - Find out about the Strapi product updates, new features and general improvements.
+Next step is to create as many [application users](http://localhost:1337/admin/content-manager/collection-types/plugin::users-permissions.user) as you wish. Make sure to flag them as `confirmed` and to assign them the `Authenticated` role.
 
-Feel free to check out the [Strapi GitHub repository](https://github.com/strapi/strapi). Your feedback and contributions are welcome!
-
-## ✨ Community
-
-- [Discord](https://discord.strapi.io) - Come chat with the Strapi community including the core team.
-- [Forum](https://forum.strapi.io/) - Place to discuss, ask questions and find answers, show your Strapi project and get feedback or just talk with other Community members.
-- [Awesome Strapi](https://github.com/strapi/awesome-strapi) - A curated list of awesome things related to Strapi.
-
----
-
-<sub>🤫 Psst! [Strapi is hiring](https://strapi.io/careers).</sub>
+Finally you can access to the [frontend application](http://localhost:3000) by using one of the application users you just created.
